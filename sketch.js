@@ -1,10 +1,10 @@
 
 const IMG_WIDTH = 720;
 const IMG_HEIGHT = 1080;
-const POINTS_DIST = 15;
+const POINTS_DIST = 46;
 
-const POINTS_X = IMG_WIDTH / POINTS_DIST;
-const POINTS_Y = IMG_HEIGHT / POINTS_DIST;
+const POINTS_X = Math.floor(IMG_WIDTH / POINTS_DIST);
+const POINTS_Y = Math.floor(IMG_HEIGHT / POINTS_DIST);
 
 let img;
 let points;
@@ -13,13 +13,13 @@ function preload() {
     img = loadImage('media/posvyat.jpg');
 }
 
-const pointSize = POINTS_DIST * 7 / 5;
+const pointSize = Math.floor(POINTS_DIST * 7 / 5);
 
 function setup() {
 
 
-    createCanvas(IMG_WIDTH + pointSize / 2, IMG_HEIGHT + pointSize / 2);
-    background(img);
+    createCanvas(IMG_WIDTH + Math.floor(pointSize / 2), IMG_HEIGHT + Math.floor(pointSize / 2));
+    // background(img);
 
     img.loadPixels();
     
@@ -43,9 +43,8 @@ function setup() {
     for (let i = 0; i < points.length; i++) {
         for (let j = 0; j < points[0].length; j++) {
             let p = points[i][j];
-            console.log(p);
             stroke(p.color);
-            point(p.x + pointSize / 2, p.y + pointSize / 2);
+            point(p.x + Math.floor(pointSize / 2), p.y + Math.floor(pointSize / 2));
         }
     }
 
