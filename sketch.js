@@ -3,7 +3,6 @@ const IMG_WIDTH = 720;
 const IMG_HEIGHT = 1080;
 
 let pointsDist = 72;
-let pointsDistDouble = pointsDist;
 let pointsX;
 let pointsY;
 
@@ -29,13 +28,12 @@ function setup() {
     createCanvas(IMG_WIDTH + Math.floor(pointSize / 2), IMG_HEIGHT + Math.floor(pointSize / 2));
     
     img.loadPixels();
-    frameRate(20);
 }
 
 
 function draw() {
     
-    if (pointsDist > 7) {
+    if (pointsDist > 8) {
         makePoints();
     } else {
         background(255);
@@ -73,7 +71,6 @@ function makePoints() {
         }
     }
     
-    pointsDistDouble = max(7, pointsDistDouble / 1.05);
-    pointsDist = Math.floor(pointsDistDouble);
+    pointsDist -= 1;
     setPointsCntAndSize();
 }
