@@ -45,7 +45,7 @@ function setup() {
             let p = points[i][j];
             console.log(p);
             stroke(p.color);
-            // point(p.x + pointSize / 2, p.y + pointSize / 2);
+            point(p.x + pointSize / 2, p.y + pointSize / 2);
         }
     }
 
@@ -54,5 +54,3 @@ function setup() {
 function draw() {
 
 }
-
-ЗАГИТПУШ МЕНЯ
