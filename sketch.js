@@ -13,12 +13,13 @@ let lineWeight = 20;
 
 let backLayer;
 let lineLayer;
+let tintImageLayer;
 
 let prevX;
 let prevY;
 let prevColor;
 
-let drawMode = 'off';
+let drawMode = 'off';  // 3 modes: 'paint' processes and prints line, 'back' prints only back layer and image, 'off' prints only image
 let showImageFlag = true;
 
 
@@ -38,7 +39,11 @@ function setup() {
     lineLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
     lineLayer.strokeWeight(lineWeight);
 
-    displayLayers(showImageFlag);
+    tintImageLayer = createGraphics(IMG_WIDTH, IMG_HEIGHT);
+    tintImageLayer.tint(255, 128);
+    tintImageLayer.image(img, 0, 0);
+
+    displayLayers();
 
     noLoop();
 }
@@ -48,9 +53,9 @@ function mousePressed() {
     if (!cursorInBounds())
         return;
 
-    prevX = mouseX;
-    prevY = mouseY;
-    prevColor = getImageColor(prevX, prevY);
+    prevX = null;
+    prevY = null;
+    prevColor = null;
 
     drawMode = 'paint';
 
@@ -65,7 +70,7 @@ function mouseReleased() {
     backLayer.image(lineLayer, 0, 0);
     lineLayer.clear();
     
-    drawMode = 'off';
+    drawMode = 'back';
     redraw();
 }
 
@@ -75,45 +80,46 @@ function draw() {
     switch (drawMode) {
         case 'paint':
 
-            if (!cursorInBounds())
+            if (!cursorInBounds() || (mouseX == prevX && mouseY == prevY))
                 break;
         
             currentColor = getImageColor(mouseX, mouseY);
     
-            if (mouseX == prevX && mouseY == prevY) {
+            if (prevColor === null) {
     
-                lineLayer.stroke(prevColor);
-                lineLayer.point(prevX, prevY);
-    
+                lineLayer.stroke(currentColor);
+                lineLayer.point(mouseX, mouseY);
+
             } else {
-    
+                
                 gradiantLine(prevColor, currentColor, prevX, prevY, mouseX, mouseY, lineLayer);
             }
-        
+
+            displayLayers();
+            
             prevX = mouseX;
             prevY = mouseY;
             prevColor = currentColor;
     
             break;
             
+        case 'back':
+            displayLayers();
+            break;
+        
         default:
             break;
     }
-
-    displayLayers(showImageFlag);
+        
 }
 
 
-function displayLayers(showImage = true) {
+function displayLayers() {
 
     clear();
     
-    if (showImage) {
-        
-        tint(255, 128);
-        image(img, shift, shift);
-        noTint();
-    }
+    if (showImageFlag)
+        image(tintImageLayer, shift, shift);
 
     image(backLayer, 0, 0);
     image(lineLayer, 0, 0);
@@ -164,7 +170,7 @@ function cursorInBounds() {
 function gradiantLine(color1, color2, x1, y1, x2, y2, layer) {
     for (let i = 0; i < 100; i ++) {
       layer.stroke(lerpColor(color1, color2, i/100.0));
-      layer.line(
+        layer.line(
         ((100 - i) * x1 + i * x2) / 100.0,
         ((100 - i) * y1 + i * y2) / 100.0,
         ((100 - i - 1) * x1 + (i + 1) * x2) / 100.0,
