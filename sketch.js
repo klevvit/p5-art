@@ -38,7 +38,7 @@ function setup() {
     makePointsArray();
     
     createCanvas(IMG_WIDTH , IMG_HEIGHT);
-    background(200);
+    background(255);
    
     // ----- draw lines -----
     strokeWeight(lineWeight);
