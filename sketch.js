@@ -40,7 +40,7 @@ function setup() {
 
     displayLayers(showImageFlag);
 
-    // noLoop();
+    noLoop();
 }
 
 function mousePressed() {
@@ -54,16 +54,19 @@ function mousePressed() {
 
     drawMode = 'paint';
 
-    // loop();
+    loop();
 }
 
 
 function mouseReleased() {
     
+    noLoop();
+
     backLayer.image(lineLayer, 0, 0);
     lineLayer.clear();
     
     drawMode = 'off';
+    redraw();
 }
 
 
@@ -125,7 +128,7 @@ function keyTyped() {
         case 'А':  // russian letter
         case 'а':
             showImageFlag = !showImageFlag;
-
+            redraw();
             break;
     
         case '-':
