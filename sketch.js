@@ -1,17 +1,22 @@
 
-let img;
 const IMG_WIDTH = 576;
 const IMG_HEIGHT = 864;
 
-let lineWeight = 30;
-let shift = lineWeight / 2;  // shift for both axes to fit lines into canvas
+const LINE_WEIGHT_MIN = 5;
+const LINE_WEIGHT_MAX = 50;
+
+const shift = LINE_WEIGHT_MAX / 2;  // shift for both axes to fit lines into canvas
+
+let img;
+
+let lineWeight = 20;
 
 let backLayer;
 let lineLayer;
 
-let startX;
-let startY;
-let startColor;
+let prevX;
+let prevY;
+let prevColor;
 
 let drawMode = 'off';
 let showImageFlag = true;
@@ -28,11 +33,14 @@ function setup() {
     img.loadPixels();
 
     createCanvas(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
-    background(255);
 
     backLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
     lineLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
     lineLayer.strokeWeight(lineWeight);
+
+    displayLayers(showImageFlag);
+
+    // noLoop();
 }
 
 function mousePressed() {
@@ -40,13 +48,13 @@ function mousePressed() {
     if (!cursorInBounds())
         return;
 
-    startX = mouseX;
-    startY = mouseY;
-    startColor = getImageColor(startX, startY);
+    prevX = mouseX;
+    prevY = mouseY;
+    prevColor = getImageColor(prevX, prevY);
 
     drawMode = 'paint';
 
-    loop();
+    // loop();
 }
 
 
@@ -69,19 +77,19 @@ function draw() {
         
             currentColor = getImageColor(mouseX, mouseY);
     
-            if (mouseX == startX && mouseY == startY) {
+            if (mouseX == prevX && mouseY == prevY) {
     
-                lineLayer.stroke(startColor);
-                lineLayer.point(startX, startY);
+                lineLayer.stroke(prevColor);
+                lineLayer.point(prevX, prevY);
     
             } else {
     
-                gradiantLine(startColor, currentColor, startX, startY, mouseX, mouseY, lineLayer);
+                gradiantLine(prevColor, currentColor, prevX, prevY, mouseX, mouseY, lineLayer);
             }
         
-            startX = mouseX;
-            startY = mouseY;
-            startColor = currentColor;
+            prevX = mouseX;
+            prevY = mouseY;
+            prevColor = currentColor;
     
             break;
             
@@ -122,13 +130,13 @@ function keyTyped() {
     
         case '-':
         case '_':
-            lineWeight = max(5, lineWeight - 5);
+            lineWeight = max(LINE_WEIGHT_MIN, lineWeight - 5);
             lineLayer.strokeWeight(lineWeight);
             break;
 
         case '=':
         case '+':
-            lineWeight += 5;
+            lineWeight = min(LINE_WEIGHT_MAX, lineWeight + 5);
             lineLayer.strokeWeight(lineWeight);
             break;
 
