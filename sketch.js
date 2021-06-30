@@ -115,11 +115,22 @@ function keyTyped() {
         case 'f':
         case 'А':  // russian letter
         case 'а':
-            
             showImageFlag = !showImageFlag;
 
             break;
     
+        case '-':
+        case '_':
+            lineWeight = max(5, lineWeight - 5);
+            lineLayer.strokeWeight(lineWeight);
+            break;
+
+        case '=':
+        case '+':
+            lineWeight += 5;
+            lineLayer.strokeWeight(lineWeight);
+            break;
+
         default:
             break;
     }
