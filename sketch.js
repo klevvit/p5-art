@@ -1,8 +1,8 @@
 
-const IMG_WIDTH = 720;
-const IMG_HEIGHT = 1080;
+const IMG_WIDTH = 576;
+const IMG_HEIGHT = 864;
 
-let pointsDist = 20;
+let pointsDist = 40;
 let pointsX;
 let pointsY;
 let pointSize;
@@ -16,14 +16,15 @@ let points;
  * So it'll be a little tricky, because point[1][2] means Y = 1 and X = 2.
  */
 function setPointsCntAndSize() {
-    pointsX = Math.floor(IMG_WIDTH / pointsDist);
-    pointsY = Math.floor(IMG_HEIGHT / pointsDist);
+    pointsX = Math.floor(1 + IMG_WIDTH / pointsDist);
+    pointsY = Math.floor(1 + IMG_HEIGHT / pointsDist);
     pointSize = pointsDist / 3;
     lineWeight = pointsDist / 6;
 }
 
 function preload() {
     img = loadImage('media/posvyat.jpg');
+    img.resize(IMG_WIDTH, IMG_HEIGHT);
 }
 
 
@@ -34,12 +35,10 @@ function setup() {
 
     let shift = max(pointSize / 2, lineWeight / 2);  // shift for both axes to fit points and lines into canvas
 
-    createCanvas(IMG_WIDTH , IMG_HEIGHT); // TODO deal with it
-    background(255);
+    makePointsArray();
     
-    makeArray();
-    
-    
+    createCanvas(IMG_WIDTH , IMG_HEIGHT);
+    background(200);
    
     // ----- draw lines -----
     strokeWeight(lineWeight);
@@ -75,30 +74,6 @@ function setup() {
         }
     }
 
-    // // edges left & right
-    // for (let i = 0; i < Math.ceil(points.length / 2) - 1; i++) {
-    //     let p1 = points[2*i][0];
-    //     let p2 = points[2*i + 2][0];
-    //     gradiantLine(p1.color, p2.color, p1.x + shift, p1.y + shift, p2.x + shift, p2.y + shift);
-        
-    //     let p3 = points[2*i][pointsX - 1];
-    //     let p4 = points[2*i + 2][pointsX - 1];
-    //     gradiantLine(p3.color, p4.color, p3.x + shift, p3.y + shift, p4.x + shift, p4.y + shift);
-    // }
-
-    // // edge ceil
-    // for (let j = 0; j < points[0].length; j++) {
-    //     let p1 = points[0][j];
-    //     let p2 = points[0][0];
-    //     gradiantLine(p1.color, p2.color, p1.x + shift, p1.y + shift, p2.x + shift, p2.y + shift);
-    // }   
-    //     // edge floor
-    // for (let j = 0; j < points[pointsY - 1].length; j++) {
-    //     let p1 = points[pointsY - 1][j];
-    //     let p2 = points[pointsY - 1][0];
-    //     gradiantLine(p1.color, p2.color, p1.x + shift, p1.y + shift, p2.x + shift, p2.y + shift);
-    // }
-
     // ----! draw lines -----
     
     // ----- draw points -----
@@ -113,14 +88,10 @@ function setup() {
     }
     // ----! draw points -----
 
-    // stroke(0);
-    // strokeWeight(lineWeight);
-    // line(0, 0, IMG_WIDTH, IMG_HEIGHT);
-
 }
 
 
-function makeArray() {
+function makePointsArray() {
     points = new Array(pointsY);
     
     for (let i = 0; i < pointsY; i++) {
@@ -147,4 +118,4 @@ function gradiantLine(color1, color2, x1, y1, x2, y2) {
         ((100 - i - 1) * y1 + (i + 1) * y2) / 100.0
       );
     }
-  }
+}
