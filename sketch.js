@@ -1,7 +1,7 @@
 
 let img;
-const IMG_WIDTH = 576; // 616
-const IMG_HEIGHT = 864; // 904
+const IMG_WIDTH = 576;
+const IMG_HEIGHT = 864;
 
 let lineWeight = 30;
 let shift = lineWeight / 2;  // shift for both axes to fit lines into canvas
@@ -129,28 +129,13 @@ function getImageColor(x, y) {
     return color(img.get(x - shift, y - shift));
 }
 
+
 /** Returns true if cursor is at least at shift distance from all canvas sides, false otherwise. */
 function cursorInBounds() {
     return mouseX >= shift && mouseY >= shift &&
         mouseX <= IMG_WIDTH + shift && mouseY <= IMG_HEIGHT + shift;
 }
 
-// function makePointsArray() { 
-//     points = new Array(pointsY);
-    
-//     for (let i = 0; i < pointsY; i++) {
-//         points[i] = new Array(pointsX - i % 2);
-        
-//         for (let j = 0; j < pointsX - i % 2; j++) {
-//             points[i][j] = { 
-//                 x: (j + 1/2 * (i % 2)) * pointsDist,
-//                 y: i * pointsDist,
-//                 color: color(img.get(j * pointsDist, i * pointsDist))
-//                 };
-//         }
-    
-//     }
-// }
 
 function gradiantLine(color1, color2, x1, y1, x2, y2, layer) {
     for (let i = 0; i < 100; i ++) {
