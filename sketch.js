@@ -107,7 +107,6 @@ function draw() {
 function displayLayers(showImage = true) {
 
     clear();
-    background(255);
     
     if (showImage) {
         
