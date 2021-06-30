@@ -113,6 +113,8 @@ function keyTyped() {
     switch (key) {
         case 'F':
         case 'f':
+        case 'А':  // russian letter
+        case 'а':
             
             showImageFlag = !showImageFlag;
 
@@ -142,8 +144,8 @@ function gradiantLine(color1, color2, x1, y1, x2, y2, layer) {
       layer.stroke(lerpColor(color1, color2, i/100.0));
       layer.line(
         ((100 - i) * x1 + i * x2) / 100.0,
-        ((100 - i) * y1 + i * y2) / 100.0, 
-        ((100 - i - 1) * x1 + (i + 1) * x2) / 100.0, 
+        ((100 - i) * y1 + i * y2) / 100.0,
+        ((100 - i - 1) * x1 + (i + 1) * x2) / 100.0,
         ((100 - i - 1) * y1 + (i + 1) * y2) / 100.0
       );
     }
