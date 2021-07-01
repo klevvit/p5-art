@@ -11,15 +11,17 @@ let img;
 
 let lineWeight = 20;
 
-let backLayer;
-let lineLayer;
-let tintImageLayer;
+let backLayer;  // with previously drawn lines
+let lineLayer;  // with line being currently drawn
+let tintImageLayer;  // never changed once initialized
+let backAndImageLayer;  // back already drawn on image
 
 let prevX;
 let prevY;
 let prevColor;
 
-let drawMode = 'off';  // 3 modes: 'paint' processes and prints line, 'back' prints only back layer and image, 'off' prints only image
+let drawMode;  // 3 modes: 'paint' processes and prints line updates, 'back' clears canvas and prints only back layer and image,
+               // 'paint-update-back' both processes line and updates canvas once, then switches to 'paint'
 let showImageFlag = true;
 
 
@@ -34,7 +36,17 @@ function setup() {
     img.loadPixels();
 
     createCanvas(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    initLayers();
 
+    drawMode = 'back';
+    displayLayers();
+
+    noLoop();
+}
+
+
+/** create layers and set their initial parameters */
+function initLayers() {
     backLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
     lineLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
     lineLayer.strokeWeight(lineWeight);
@@ -43,10 +55,11 @@ function setup() {
     tintImageLayer.tint(255, 128);
     tintImageLayer.image(img, 0, 0);
 
-    displayLayers();
-
-    noLoop();
+    backAndImageLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    if (showImageFlag)
+        backAndImageLayer.image(tintImageLayer, shift, shift);
 }
+
 
 function mousePressed() {
 
@@ -67,8 +80,8 @@ function mouseReleased() {
     
     noLoop();
 
-    backLayer.image(lineLayer, 0, 0);
-    lineLayer.clear();
+
+    moveLineToBack();
     
     drawMode = 'back';
     redraw();
@@ -77,11 +90,19 @@ function mouseReleased() {
 
 function draw() {
 
+    console.log("Draw, mode = " + drawMode + ", showImage = " + showImageFlag);
+
     switch (drawMode) {
         case 'paint':
+        case 'paint-update-back':
 
-            if (!cursorInBounds() || (mouseX == prevX && mouseY == prevY))
+            if (!cursorInBounds() || (mouseX == prevX && mouseY == prevY)) {
+                
+                if (drawMode == 'paint-update-back')
+                    displayLayers();
+                    
                 break;
+            }
         
             currentColor = getImageColor(mouseX, mouseY);
     
@@ -106,23 +127,44 @@ function draw() {
         case 'back':
             displayLayers();
             break;
-        
-        default:
-            break;
     }
-        
+
+    if (drawMode == 'paint-update-back')
+        drawMode = 'paint';
 }
 
 
 function displayLayers() {
 
-    clear();
+    if (drawMode == 'back' || drawMode == 'paint-update-back') {
+        clear();
+        image(backAndImageLayer, 0, 0);
+    }
     
-    if (showImageFlag)
-        image(tintImageLayer, shift, shift);
+    if (drawMode == 'paint' || drawMode == 'paint-update-back')
+        image(lineLayer, 0, 0);
+}
 
-    image(backLayer, 0, 0);
-    image(lineLayer, 0, 0);
+
+/** clear line layer, moving its contents to back layer, and update backAndImage layer */
+function moveLineToBack() {
+
+    backLayer.image(lineLayer, 0, 0);
+    lineLayer.clear();
+
+    makeBackAndImageLayer();
+
+}
+
+
+function makeBackAndImageLayer() {
+
+    backAndImageLayer.clear();
+
+    if (showImageFlag)
+        backAndImageLayer.image(tintImageLayer, shift, shift);
+
+    backAndImageLayer.image(backLayer, 0, 0);
 }
 
 
@@ -130,10 +172,16 @@ function keyTyped() {
     switch (key) {
         case 'F':
         case 'f':
-        case 'А':  // russian letter
+        case 'А':  // Russian letter
         case 'а':
             showImageFlag = !showImageFlag;
-            redraw();
+            makeBackAndImageLayer();
+
+            if (drawMode == 'paint')
+                drawMode = 'paint-update-back';
+            else
+                redraw();
+            
             break;
     
         case '-':
