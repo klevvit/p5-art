@@ -24,6 +24,8 @@ let drawMode;  // 3 modes: 'paint' processes and prints line updates, 'back' cle
                // 'paint-update-back' both processes line and updates canvas once, then switches to 'paint'
 let showImageFlag = true;
 
+let htmlBrushSize;
+let htmlImageShown;
 
 function preload() {
     img = loadImage('media/posvyat.jpg');
@@ -32,6 +34,12 @@ function preload() {
 
 function setup() {
     
+    htmlBrushSize = select('.brush-size').elt;
+    htmlImageShown = select('.imageshown').elt;
+
+    htmlBrushSize.innerHTML = lineWeight;
+    htmlImageShown.innerHTML = showImageFlag;
+
     img.resize(IMG_WIDTH, IMG_HEIGHT);
     img.loadPixels();
 
@@ -90,7 +98,7 @@ function mouseReleased() {
 
 function draw() {
 
-    console.log("Draw, mode = " + drawMode + ", showImage = " + showImageFlag);
+    // console.log("Draw, mode = " + drawMode + ", showImage = " + showImageFlag);
 
     switch (drawMode) {
         case 'paint':
@@ -175,6 +183,7 @@ function keyTyped() {
         case 'А':  // Russian letter
         case 'а':
             showImageFlag = !showImageFlag;
+            htmlImageShown.innerHTML = showImageFlag;
             makeBackAndImageLayer();
 
             if (drawMode == 'paint')
@@ -188,12 +197,14 @@ function keyTyped() {
         case '_':
             lineWeight = max(LINE_WEIGHT_MIN, lineWeight - 5);
             lineLayer.strokeWeight(lineWeight);
+            htmlBrushSize.innerHTML = lineWeight;
             break;
 
         case '=':
         case '+':
             lineWeight = min(LINE_WEIGHT_MAX, lineWeight + 5);
             lineLayer.strokeWeight(lineWeight);
+            htmlBrushSize.innerHTML = lineWeight;
             break;
 
         default:
