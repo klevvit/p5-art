@@ -6,6 +6,6 @@
     }
 }
 
-body {
+.content {
     display: flex;
 }
