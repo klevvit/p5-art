@@ -27,8 +27,9 @@ let showImageFlag = true;
 let htmlBrushSize;
 let htmlImageShown;
 
+
 function preload() {
-    img = loadImage('media/posvyat.jpg');
+    img = loadImage('../media/posvyat.jpg');
 }
 
 
