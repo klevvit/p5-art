@@ -1,15 +1,12 @@
 
-const IMG_WIDTH = 576;
-const IMG_HEIGHT = 864;
-
 const LINE_WEIGHT_MIN = 5;
 const LINE_WEIGHT_MAX = 50;
 
-const shift = LINE_WEIGHT_MAX / 2;  // shift for both axes to fit lines into canvas
+const SHIFT = LINE_WEIGHT_MAX / 2;  // shift for both axes to fit lines into canvas
 
-const IMG_SOURCE = '../media/posvyat.jpg';
+const DEFAULT_IMG_SOURCE = '../media/posvyat.jpg';
 
-let img;
+let img;  // p5.Image used for current drawing
 
 let lineWeight = 20;
 
@@ -31,24 +28,18 @@ let htmlImageShown;
 
 
 function preload() {
-    img = loadImage(IMG_SOURCE);
+    img = loadImage(DEFAULT_IMG_SOURCE);
 }
 
 
 function setup() {
 
-    initImgUpdate();
+    initHTMLControls();
 
-    htmlBrushSize = select('.brush-size').elt;
-    htmlImageShown = select('.imageshown').elt;
-
-    htmlBrushSize.innerHTML = lineWeight;
-    htmlImageShown.innerHTML = showImageFlag;
-
-    img.resize(IMG_WIDTH, IMG_HEIGHT);
+    // img.resize(IMG_WIDTH, IMG_HEIGHT);   TODO make resize depending on screen size
     img.loadPixels();
 
-    let canvas = createCanvas(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    let canvas = createCanvas(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
     canvas.parent('sketch-holder');
 
     initLayers();
@@ -59,16 +50,32 @@ function setup() {
     noLoop();
 }
 
-function initImgUpdate() {
-    const fileInput = document.getElementById('img_load');
+
+function initHTMLControls() {
+
+    initLoadImgButton();
+
+    htmlBrushSize = select('.brush-size').elt;
+    htmlImageShown = select('.imageshown').elt;
+
+    htmlBrushSize.innerHTML = lineWeight;
+    htmlImageShown.innerHTML = showImageFlag;
+}
+
+
+function initLoadImgButton() {
+    const fileInput = document.getElementById('load_img');
     fileInput.onchange = () => {
         const imgFile = fileInput.files[0];
         let imgURL = URL.createObjectURL(imgFile);
         
         loadImage(imgURL, newImg => {
-            newImg.resize(IMG_WIDTH, IMG_HEIGHT);
+            // newImg.resize(IMG_WIDTH, IMG_HEIGHT);   TODO make resize depending on screen size
+
             newImg.loadPixels();
             img = newImg;
+            
+            resizeCanvas(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
             
             initLayers();
             drawMode = 'back';
@@ -77,19 +84,20 @@ function initImgUpdate() {
     }
 }
 
+
 /** create layers and set their initial parameters */
 function initLayers() {
-    backLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
-    lineLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    backLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
+    lineLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
     lineLayer.strokeWeight(lineWeight);
 
-    tintImageLayer = createGraphics(IMG_WIDTH, IMG_HEIGHT);
+    tintImageLayer = createGraphics(img.width, img.height);
     tintImageLayer.tint(255, 128);
     tintImageLayer.image(img, 0, 0);
 
-    backAndImageLayer = createGraphics(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    backAndImageLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
     if (showImageFlag)
-        backAndImageLayer.image(tintImageLayer, shift, shift);
+        backAndImageLayer.image(tintImageLayer, SHIFT, SHIFT);
 }
 
 
@@ -194,7 +202,7 @@ function makeBackAndImageLayer() {
     backAndImageLayer.clear();
 
     if (showImageFlag)
-        backAndImageLayer.image(tintImageLayer, shift, shift);
+        backAndImageLayer.image(tintImageLayer, SHIFT, SHIFT);
 
     backAndImageLayer.image(backLayer, 0, 0);
 }
@@ -239,14 +247,14 @@ function keyTyped() {
 
 /** Returns color of image point under coordinates (x, y) taking shift into account */
 function getImageColor(x, y) {
-    return color(img.get(x - shift, y - shift));
+    return color(img.get(x - SHIFT, y - SHIFT));
 }
 
 
 /** Returns true if cursor is at least at shift distance from all canvas sides, false otherwise. */
 function cursorInBounds() {
-    return mouseX >= shift && mouseY >= shift &&
-        mouseX <= IMG_WIDTH + shift && mouseY <= IMG_HEIGHT + shift;
+    return mouseX >= SHIFT && mouseY >= SHIFT &&
+        mouseX <= img.width + SHIFT && mouseY <= img.height + SHIFT;
 }
 
 
