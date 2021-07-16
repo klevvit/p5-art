@@ -23,7 +23,7 @@ let prevY;
 let prevColor;
 
 let drawMode;  // 3 modes: 'paint' processes and prints line updates, 'back' clears canvas and prints only back layer and image,
-               // 'paint-update-back' both processes line and updates canvas once, then switches to 'paint'
+// 'paint-update-back' both processes line and updates canvas once, then switches to 'paint'
 let showImageFlag = true;
 
 let htmlBrushSize;
@@ -36,7 +36,9 @@ function preload() {
 
 
 function setup() {
-    
+
+    initImgUpdate();
+
     htmlBrushSize = select('.brush-size').elt;
     htmlImageShown = select('.imageshown').elt;
 
@@ -57,6 +59,23 @@ function setup() {
     noLoop();
 }
 
+function initImgUpdate() {
+    const fileInput = document.getElementById('img_load');
+    fileInput.onchange = () => {
+        const imgFile = fileInput.files[0];
+        let imgURL = URL.createObjectURL(imgFile);
+        
+        loadImage(imgURL, newImg => {
+            newImg.resize(IMG_WIDTH, IMG_HEIGHT);
+            newImg.loadPixels();
+            img = newImg;
+            
+            initLayers();
+            drawMode = 'back';
+            displayLayers();
+        });
+    }
+}
 
 /** create layers and set their initial parameters */
 function initLayers() {
@@ -90,12 +109,12 @@ function mousePressed() {
 
 
 function mouseReleased() {
-    
+
     noLoop();
 
 
     moveLineToBack();
-    
+
     drawMode = 'back';
     redraw();
 }
@@ -110,33 +129,33 @@ function draw() {
         case 'paint-update-back':
 
             if (!cursorInBounds() || (mouseX == prevX && mouseY == prevY)) {
-                
+
                 if (drawMode == 'paint-update-back')
                     displayLayers();
-                    
+
                 break;
             }
-        
+
             currentColor = getImageColor(mouseX, mouseY);
-    
+
             if (prevColor === null) {
-    
+
                 lineLayer.stroke(currentColor);
                 lineLayer.point(mouseX, mouseY);
 
             } else {
-                
+
                 gradiantLine(prevColor, currentColor, prevX, prevY, mouseX, mouseY, lineLayer);
             }
 
             displayLayers();
-            
+
             prevX = mouseX;
             prevY = mouseY;
             prevColor = currentColor;
-    
+
             break;
-            
+
         case 'back':
             displayLayers();
             break;
@@ -153,7 +172,7 @@ function displayLayers() {
         clear();
         image(backAndImageLayer, 0, 0);
     }
-    
+
     if (drawMode == 'paint' || drawMode == 'paint-update-back')
         image(lineLayer, 0, 0);
 }
@@ -195,9 +214,9 @@ function keyTyped() {
                 drawMode = 'paint-update-back';
             else
                 redraw();
-            
+
             break;
-    
+
         case '-':
         case '_':
             lineWeight = max(LINE_WEIGHT_MIN, lineWeight - 5);
@@ -234,15 +253,15 @@ function cursorInBounds() {
 function gradiantLine(color1, color2, x1, y1, x2, y2, layer) {
 
     const QUALITY = 100;
-    
-    for (let i = 0; i < QUALITY; i ++) {
-    
-        layer.stroke(lerpColor(color1, color2, i/QUALITY));
+
+    for (let i = 0; i < QUALITY; i++) {
+
+        layer.stroke(lerpColor(color1, color2, i / QUALITY));
         layer.line(
             ((QUALITY - i) * x1 + i * x2) / QUALITY,
             ((QUALITY - i) * y1 + i * y2) / QUALITY,
             ((QUALITY - i - 1) * x1 + (i + 1) * x2) / QUALITY,
             ((QUALITY - i - 1) * y1 + (i + 1) * y2) / QUALITY
-      );
+        );
     }
 }
