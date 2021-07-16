@@ -7,6 +7,8 @@ const LINE_WEIGHT_MAX = 50;
 
 const shift = LINE_WEIGHT_MAX / 2;  // shift for both axes to fit lines into canvas
 
+const IMG_SOURCE = '../media/posvyat.jpg';
+
 let img;
 
 let lineWeight = 20;
@@ -29,7 +31,7 @@ let htmlImageShown;
 
 
 function preload() {
-    img = loadImage('../media/posvyat.jpg');
+    img = loadImage(IMG_SOURCE);
 }
 
 
