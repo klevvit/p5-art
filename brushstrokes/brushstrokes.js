@@ -44,7 +44,9 @@ function setup() {
     img.resize(IMG_WIDTH, IMG_HEIGHT);
     img.loadPixels();
 
-    createCanvas(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    let canvas = createCanvas(IMG_WIDTH + 2 * shift, IMG_HEIGHT + 2 * shift);
+    canvas.parent('sketch-holder');
+
     initLayers();
 
     drawMode = 'back';
