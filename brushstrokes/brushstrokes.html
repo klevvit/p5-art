@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Brushstrokes — KLevvit</title>
+    <link rel="stylesheet" type="text/css" href="brushstrokes.css">
+
+    <script src="../p5.js"></script>
+    <script src="sketch.js"></script>
+    <script src="layers.js"></script>
+    <script src="HTMLcontrols.js"></script>
+</head>
+
+<body>
+    <h1>Brushstrokes</h1>
+
+    <div class="content">
+        <div id="sketch-holder">
+            <!-- p5.js sketch here -->
+        </div>
+
+        <div class="right-column">
+            <h3>Brush size: <span class="brush-size">loading...</span></h3>
+            <h3>Image: <span class="imageshown">loading...</span></h3>
+
+            Key shortcuts:
+            <table>
+                <tr>
+                    <td>Toggle background image</td>
+                    <td><b>F</b></td>
+                </tr>
+                <tr>
+                    <td>Decrease brush size</td>
+                    <td><b>-</b>, <b>_</b><br></td>
+                </tr>
+                <tr>
+                    <td>Increase brush size</td>
+                    <td><b>=</b>, <b>+</b><br></td>
+                </tr>
+            </table>
+
+            <br>
+            <b>
+                <label for="load_img" style="cursor: pointer;">Click here to load your own image</label>
+                <input type="file" id="load_img" accept="image/*" style="display: none;">
+            </b>
+
+        </div>
+    </div>
+</body>
+
+</html>
