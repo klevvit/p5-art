@@ -10,11 +10,6 @@ let img;  // p5.Image used for current drawing
 
 let lineWeight = 20;
 
-let backLayer;  // with previously drawn lines
-let lineLayer;  // with line being currently drawn
-let tintImageLayer;  // never changed once initialized
-let backAndImageLayer;  // back already drawn on image
-
 let prevX;
 let prevY;
 let prevColor;
@@ -23,15 +18,14 @@ let drawMode;  // 3 modes: 'paint' processes and prints line updates, 'back' cle
 // 'paint-update-back' both processes line and updates canvas once, then switches to 'paint'
 let showImageFlag = true;
 
-let htmlBrushSize;
-let htmlImageShown;
 
-
+/** p5.js function */
 function preload() {
     img = loadImage(DEFAULT_IMG_SOURCE);
 }
 
 
+/** p5.js function */
 function setup() {
 
     initHTMLControls();
@@ -51,53 +45,19 @@ function setup() {
 }
 
 
-function initHTMLControls() {
+/** Actions when user loads a new image.
+ * @param {p5.Image} newImg 
+ */
+function onImageChange(newImg) {
 
-    initLoadImgButton();
-
-    htmlBrushSize = select('.brush-size').elt;
-    htmlImageShown = select('.imageshown').elt;
-
-    htmlBrushSize.innerHTML = lineWeight;
-    htmlImageShown.innerHTML = showImageFlag;
-}
-
-
-function initLoadImgButton() {
-    const fileInput = document.getElementById('load_img');
-    fileInput.onchange = () => {
-        const imgFile = fileInput.files[0];
-        let imgURL = URL.createObjectURL(imgFile);
-        
-        loadImage(imgURL, newImg => {
-            // newImg.resize(IMG_WIDTH, IMG_HEIGHT);   TODO make resize depending on screen size
-
-            newImg.loadPixels();
-            img = newImg;
-            
-            resizeCanvas(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
-            
-            initLayers();
-            drawMode = 'back';
-            displayLayers();
-        });
-    }
-}
-
-
-/** create layers and set their initial parameters */
-function initLayers() {
-    backLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
-    lineLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
-    lineLayer.strokeWeight(lineWeight);
-
-    tintImageLayer = createGraphics(img.width, img.height);
-    tintImageLayer.tint(255, 128);
-    tintImageLayer.image(img, 0, 0);
-
-    backAndImageLayer = createGraphics(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
-    if (showImageFlag)
-        backAndImageLayer.image(tintImageLayer, SHIFT, SHIFT);
+    newImg.loadPixels();
+    img = newImg;
+    
+    resizeCanvas(img.width + 2 * SHIFT, img.height + 2 * SHIFT);
+    
+    initLayers();
+    drawMode = 'back';
+    displayLayers();
 }
 
 
@@ -128,6 +88,7 @@ function mouseReleased() {
 }
 
 
+/** p5.js function; different behavior depending on drawMode variable */
 function draw() {
 
     // console.log("Draw, mode = " + drawMode + ", showImage = " + showImageFlag);
@@ -174,6 +135,7 @@ function draw() {
 }
 
 
+/** draw current state of canvas. */
 function displayLayers() {
 
     if (drawMode == 'back' || drawMode == 'paint-update-back') {
@@ -186,14 +148,12 @@ function displayLayers() {
 }
 
 
-/** clear line layer, moving its contents to back layer, and update backAndImage layer */
+/** clear line layer, moving its contents to back layer and backAndImage layer */
 function moveLineToBack() {
 
     backLayer.image(lineLayer, 0, 0);
+    backAndImageLayer.image(lineLayer, 0, 0);
     lineLayer.clear();
-
-    makeBackAndImageLayer();
-
 }
 
 
@@ -258,6 +218,8 @@ function cursorInBounds() {
 }
 
 
+// TODO make better
+/** Draw gradient line to layer. */
 function gradiantLine(color1, color2, x1, y1, x2, y2, layer) {
 
     const QUALITY = 100;
