@@ -23,7 +23,7 @@ function setPointsCntAndSize() {
 }
 
 function preload() {
-    img = loadImage('media/posvyat.jpg');
+    img = loadImage('../media/posvyat.jpg');
     img.resize(IMG_WIDTH, IMG_HEIGHT);
 }
 
@@ -37,7 +37,9 @@ function setup() {
 
     makePointsArray();
     
-    createCanvas(IMG_WIDTH , IMG_HEIGHT);
+    let canvas = createCanvas(IMG_WIDTH , IMG_HEIGHT);
+    canvas.parent('sketch-holder');
+
     background(255);
    
     // ----- draw lines -----
