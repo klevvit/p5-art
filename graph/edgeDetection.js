@@ -4,11 +4,11 @@
  */
 
 function edgeDetection(img) {
-    let res = createImage(img.width - 1, img.height - 1);
+    let res = createImage(img.width - 2, img.height - 2);
     res.loadPixels();
 
     let greyPixelArray = makeGreyPixelArray();
-    let gradArray;   // todo balance brightness
+    let gradArray = [];
 
     let gxMask = [
         [-1, -2, -1],
@@ -21,6 +21,8 @@ function edgeDetection(img) {
         [-1, 0, 1]
     ];
 
+    let gradMax = 0;
+
     for (let i = 1; i < img.width - 1; i++) {
         for (let j = 1; j < img.height - 1; j++) {
 
@@ -28,10 +30,12 @@ function edgeDetection(img) {
             let gy = calcMask(i, j, gyMask);
 
             let grad = Math.hypot(gx, gy) / Math.sqrt(2);
-
-            write(i - 1, j - 1, grad);
+            gradMax = Math.max(gradMax, grad);
+            writeToGradArray(i - 1, j - 1, grad);
         }
     }
+
+    writeCorrectedGrad();
 
     res.updatePixels();
     return res;
@@ -55,7 +59,23 @@ function edgeDetection(img) {
         return greyPixelArray[w + img.width * h];
     }
 
-    function write(w, h, grey) {
+    function writeToGradArray(w, h, grad) {
+        gradArray[w + res.width * h] = grad;
+    }
+
+    function getFromGradArray(w, h) {
+        return gradArray[w + res.width * h];
+    }
+
+    function writeCorrectedGrad() {
+        for (let i = 0; i < res.width; i++) {
+            for (let j = 0; j < res.height; j++) {
+                writeToRes(i, j, getFromGradArray(i, j) / gradMax * 255);
+            }
+        }
+    }
+
+    function writeToRes(w, h, grey) {
         grey = Math.round(grey);
         let index = (w + res.width * h) * 4;
 
